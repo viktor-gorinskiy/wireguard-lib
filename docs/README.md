@@ -1,0 +1,38 @@
+# Wireguard
+
+Библиотека для работы с wireguard
+
+## Installation
+
+    python3 -m pip install wireguard-lib
+
+## Пример использования:
+
+Сгенерируем конфиг сервера.
+Для генерации нужен приватный ключ сервера. Для этого воспользуемся консолью Python:  
+
+```
+>>> from wireguard.wireguard import Wireguard
+>>> Wireguard().get_private_key
+'sBd8jkAY9Ht7wn+q5iGbW4MfShgjdxB1s3oTJsttaHc='
+```
+Сгенерируем конфиг сервера использую полученый ранее ключ
+```
+wg = Wireguard(
+    server_private_key = 'sBd8jkAY9Ht7wn+q5iGbW4MfShgjdxB1s3oTJsttaHc=',
+    server_addres='wireguard.example.org',
+    server_ip='10.10.10.1',
+    server_port=51821,
+)
+
+server_config = wg.get_config_server
+print(server_config)
+```
+Получим следующий конфиг:  
+```
+[Interface]
+PrivateKey = sBd8jkAY9Ht7wn+q5iGbW4MfShgjdxB1s3oTJsttaHc=
+Address = 10.10.10.1
+ListenPort = 51821
+```
+

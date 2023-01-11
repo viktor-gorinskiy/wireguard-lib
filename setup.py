@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
       name="wireguard-lib",
       packages=setuptools.find_packages(),
-      version="0.1.3",
+      version="0.1.4",
       author="Viktor Gorinskiy",
       author_email="viktor@gorinskiy.ru",
       description="Библиотека для работы с wireguard",

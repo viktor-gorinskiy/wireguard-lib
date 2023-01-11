@@ -67,12 +67,14 @@ class Wireguard():
         cmd = f"""wg set  '{self.server_name}' peer '{public_key}' allowed-ips '{ip}'"""
         subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         return True
-        
-
-    def delete(self, public_key):
+    
+    def delete(self, public_key=""):
         """Удаляет пир(слиента) используя его публичный ключ.
-        :param public_key: Публичный ключ клиента
+
+        :param public_key: Публичный ключ клиента, defaults to ""
+        :type public_key: str, optional
         """
+
         cmd = f"wg set {self.server_name} peer  {public_key} remove"
         # print(cmd)
         res = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -88,13 +90,12 @@ class Wireguard():
         """
         ip_addresses = []
         peers = []
-        cmd = f"wg show '{self.server_name}' allowed-ip_addresses"
-        result_wg_info = \
-            subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode(
-                'utf-8').split('\n')
+        cmd = f"wg show '{self.server_name}' allowed-ips"
+        result_wg_info = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode('utf-8').split('\n')
+        print('result_wg_info', result_wg_info)
         for l in result_wg_info:
             if l:
-                ip_addresses.append(l.split('\t')[1].split('/32')[0])
+                ip_addresses.append(l.split('\t')[1].split(str(self.peer_ip_mask))[0])
                 peers.append(l.split('\t')[0])
         if who == 'ip_addresses':
             return ip_addresses
@@ -209,13 +210,15 @@ class Wireguard():
 
         ip_addresses = ip_addresses_tmp
         ip_addresses = sorted([ipaddress.ip_address(addr) for addr in ip_addresses])
-        tmp_ip = ip_addresses[0]
-        for ip in ip_addresses:
-            if ip == tmp_ip:
-                tmp_ip += 1
-            else:
-                return tmp_ip
-        return ip + 1
+        if ip_addresses:
+            tmp_ip = ip_addresses[0]
+            for ip in ip_addresses:
+                if ip == tmp_ip:
+                    tmp_ip += 1
+                else:
+                    return tmp_ip
+            return ip + 1
+        return ipaddress.ip_address(self.server_ip) + 1
     
 
     def get_qr(self, peer_private_key, peer_ip, allowedIPs=''):

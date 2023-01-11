@@ -9,8 +9,10 @@ Welcome to wireguard-lib's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   
+
+   README.md
    modules
+
 
 
 Indices and tables
