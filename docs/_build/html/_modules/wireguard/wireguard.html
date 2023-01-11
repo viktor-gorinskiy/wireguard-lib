@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wireguard.wireguard &mdash; документация wireguard-lib 0.1.1</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> wireguard-lib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">wireguard</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">wireguard-lib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">wireguard.wireguard</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код wireguard.wireguard</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">ipaddress</span>
+<span class="kn">import</span> <span class="nn">qrcode</span> 
+
+
+<div class="viewcode-block" id="Wireguard"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard">[документация]</a><span class="k">class</span> <span class="nc">Wireguard</span><span class="p">():</span>
+ 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">server_name</span> <span class="o">=</span> <span class="s1">&#39;wg0&#39;</span><span class="p">,</span> 
+        <span class="n">server_addres</span> <span class="o">=</span> <span class="s1">&#39;wireguard.example.org&#39;</span><span class="p">,</span> 
+        <span class="n">server_ip</span> <span class="o">=</span> <span class="s1">&#39;10.10.10.1&#39;</span><span class="p">,</span>
+        <span class="n">server_private_key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">server_port</span> <span class="o">=</span> <span class="mi">51820</span><span class="p">,</span> 
+        <span class="n">peer_ip_mask</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> 
+        <span class="n">peer_allowedIPs</span> <span class="o">=</span> <span class="s1">&#39;0.0.0.0/0&#39;</span><span class="p">,</span> 
+        <span class="n">dns</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">server_name</span> <span class="o">=</span> <span class="n">server_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server_addres</span> <span class="o">=</span> <span class="n">server_addres</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server_private_key</span> <span class="o">=</span> <span class="n">server_private_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server_ip</span> <span class="o">=</span> <span class="n">server_ip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server_port</span> <span class="o">=</span> <span class="n">server_port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peer_ip_mask</span> <span class="o">=</span> <span class="n">peer_ip_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peer_allowedIPs</span> <span class="o">=</span> <span class="n">peer_allowedIPs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dns</span> <span class="o">=</span> <span class="n">dns</span>
+        
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_private_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Получить приватный ключ</span>
+
+<span class="sd">        :return: wireguard private_key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;wg genkey&quot;</span>
+        <span class="n">private_key</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">private_key</span>
+
+<div class="viewcode-block" id="Wireguard.get_pub_key"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard.get_pub_key">[документация]</a>    <span class="k">def</span> <span class="nf">get_pub_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">private_key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Получить публичный ключ</span>
+
+<span class="sd">        :param private_key: Приватный ключ</span>
+<span class="sd">        :return: wireguard pub_key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/bin/echo &#39;</span><span class="si">{</span><span class="n">private_key</span><span class="si">}</span><span class="s2">&#39; | wg pubkey&quot;</span>
+        <span class="n">pub_key</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pub_key</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Получить пару приватного и публичного ключей</span>
+
+<span class="sd">        :return: wireguard keys</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">private_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_private_key</span>
+        <span class="n">pub_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pub_key</span><span class="p">(</span><span class="n">private_key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;private_key&#39;</span><span class="p">:</span><span class="n">private_key</span><span class="p">,</span> <span class="s1">&#39;pub_key&#39;</span><span class="p">:</span> <span class="n">pub_key</span><span class="p">}</span>
+    
+
+<div class="viewcode-block" id="Wireguard.add"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard.add">[документация]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">public_key</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ip</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Добавить пир(клиента)</span>
+<span class="sd">        :param public_key: Публичный ключ пира(клиента)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ip</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peer_ip_mask</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;wg set  &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_name</span><span class="si">}</span><span class="s2">&#39; peer &#39;</span><span class="si">{</span><span class="n">public_key</span><span class="si">}</span><span class="s2">&#39; allowed-ips &#39;</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s2">&#39;&quot;&quot;&quot;</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+        
+
+<div class="viewcode-block" id="Wireguard.delete"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard.delete">[документация]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">public_key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Удаляет пир(слиента) используя его публичный ключ.</span>
+<span class="sd">        :param public_key: Публичный ключ клиента</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;wg set </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_name</span><span class="si">}</span><span class="s2"> peer  </span><span class="si">{</span><span class="n">public_key</span><span class="si">}</span><span class="s2"> remove&quot;</span>
+        <span class="c1"># print(cmd)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+        <span class="c1"># print(res.communicate()[0].decode(&#39;utf-8&#39;))</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="Wireguard.info"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard.info">[документация]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">who</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Возвращает либо ip адреса, либо список список публичных ключей текущих пиров</span>
+
+<span class="sd">        :param who: что возвращать peers или ip_addresses. Наверно надо переделать</span>
+<span class="sd">      </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ip_addresses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">peers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;wg show &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_name</span><span class="si">}</span><span class="s2">&#39; allowed-ip_addresses&quot;</span>
+        <span class="n">result_wg_info</span> <span class="o">=</span> \
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+                <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">result_wg_info</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">l</span><span class="p">:</span>
+                <span class="n">ip_addresses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/32&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">peers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">who</span> <span class="o">==</span> <span class="s1">&#39;ip_addresses&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ip_addresses</span>
+        <span class="k">if</span> <span class="n">who</span> <span class="o">==</span> <span class="s1">&#39;peers&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">peers</span></div>
+    
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Статус клиентов сервера</span>
+
+<span class="sd">        :return: Возвращает словарь клиентов и их статус</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;wg show &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="n">result_wg_info</span> <span class="o">=</span> \
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">peers_online</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">peer</span> <span class="ow">in</span> <span class="n">result_wg_info</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="n">peer_data</span> <span class="o">=</span> <span class="n">peer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">peer</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">server_addres</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">handshake</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">allowed_ip_addresses</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">peer_data</span><span class="p">:</span>
+                <span class="n">peer_dict</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="s1">&#39;peer:&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">peer</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;peer: &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;server_addres: &#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">server_addres</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;server_addres: &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;latest handshake: &#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">handshake</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;latest handshake: &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                        <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="c1"># print(handshake)</span>
+                <span class="k">if</span> <span class="s1">&#39;allowed ip_addresses:&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">allowed_ip_addresses</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;allowed ip_addresses: &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">peer</span><span class="p">:</span>
+                    <span class="n">peer_dict</span><span class="p">[</span><span class="s1">&#39;server_addres&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">server_addres</span>
+                    <span class="n">peer_dict</span><span class="p">[</span><span class="s1">&#39;handshake&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">handshake</span>
+                    <span class="n">peer_dict</span><span class="p">[</span><span class="s1">&#39;allowed_ip_addresses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">allowed_ip_addresses</span>
+                    <span class="n">peers_online</span><span class="p">[</span><span class="n">peer</span><span class="p">]</span> <span class="o">=</span> <span class="n">peer_dict</span>
+        <span class="k">if</span> <span class="n">peers_online</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">peers_online</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="Wireguard.get_config_client"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard.get_config_client">[документация]</a>    <span class="k">def</span> <span class="nf">get_config_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peer_private_key</span><span class="p">,</span> <span class="n">peer_ip</span><span class="p">,</span> <span class="n">allowedIPs</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Генерирует конфиг клиента.</span>
+<span class="sd">        Может использоваться для генерации qr кода и/или файла.</span>
+
+<span class="sd">        :param peer_private_key: Приватный ключ пира/клиента</span>
+<span class="sd">        :param peer_ip: ip адрес, который будет назначет клиенту в VPN сети</span>
+<span class="sd">        :param allowedIPs: Разрешонные сети, куда будет ходить клиент (маршруты) defaults to &#39;0.0.0.0/0&#39;</span>
+<span class="sd">        :return: Конфиг пира (клиента)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dns_addr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dns</span><span class="p">:</span> <span class="n">dns_addr</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DNS = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dns</span><span class="si">}{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">allowedIPs</span><span class="p">:</span> <span class="n">allowedIPs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peer_allowedIPs</span>
+
+        <span class="n">server_pub_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pub_key</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server_private_key</span><span class="p">)</span>
+
+        <span class="n">config_client</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;[Interface]</span><span class="si">{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Address = </span><span class="si">{</span><span class="n">peer_ip</span><span class="si">}{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;PrivateKey =  </span><span class="si">{</span><span class="n">peer_private_key</span><span class="si">}{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dns_addr</span><span class="si">}{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+
+            <span class="sa">f</span><span class="s1">&#39;[Peer]</span><span class="si">{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;PublicKey = </span><span class="si">{</span><span class="n">server_pub_key</span><span class="si">}{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;# PresharedKey =</span><span class="si">{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;AllowedIPs = </span><span class="si">{</span><span class="n">allowedIPs</span><span class="si">}{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;server_addres = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_addres</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">config_client</span></div>
+
+
+<div class="viewcode-block" id="Wireguard.get_config_server"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard.get_config_server">[документация]</a>    <span class="k">def</span> <span class="nf">get_config_server</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Генерирует конфиг сервера.</span>
+<span class="sd">        Удобно использовать при первоначальной настройке сервера wireguard</span>
+<span class="sd">        Стоит обратить внимание, что будет использован приватный ключ переданный при инициализации этого класса.</span>
+<span class="sd">        Это означает, что сначало надо получить приватный ключ, а потом генерировать конфиг.</span>
+
+<span class="sd">        :return: Конфиг сервера</span>
+<span class="sd">        :rtype: _type_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config_server</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;[Interface]</span><span class="si">{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;PrivateKey = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_private_key</span><span class="si">}{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Address = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_ip</span><span class="si">}{</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;ListenPort = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server_port</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">config_server</span></div>
+
+
+<div class="viewcode-block" id="Wireguard.new_ip"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard.new_ip">[документация]</a>    <span class="k">def</span> <span class="nf">new_ip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ищет новый IP адрес сортируя имеющиеся, добавляет IP в промежутках.</span>
+<span class="sd">        Функцию получает все ip адреса пирова (клиенитов), сортирует их в порядке увеличиния.</span>
+<span class="sd">        Возвращает первый свободный адрес.</span>
+<span class="sd">        Если между адресами есть свободный адрес выдает первый свободный.</span>
+
+<span class="sd">        :return: ip</span>
+<span class="sd">        :rtype: ip</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ip_addresses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">who</span><span class="o">=</span><span class="s1">&#39;ip_addresses&#39;</span><span class="p">)</span>
+        <span class="n">ip_addresses_tmp</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">ip_addresses</span><span class="p">:</span>
+            <span class="n">ip_addresses_tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ipaddress</span><span class="o">.</span><span class="n">ip_address</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">ip_addresses_tmp</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+
+        <span class="n">ip_addresses</span> <span class="o">=</span> <span class="n">ip_addresses_tmp</span>
+        <span class="n">ip_addresses</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">ipaddress</span><span class="o">.</span><span class="n">ip_address</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span> <span class="k">for</span> <span class="n">addr</span> <span class="ow">in</span> <span class="n">ip_addresses</span><span class="p">])</span>
+        <span class="n">tmp_ip</span> <span class="o">=</span> <span class="n">ip_addresses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">ip_addresses</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ip</span> <span class="o">==</span> <span class="n">tmp_ip</span><span class="p">:</span>
+                <span class="n">tmp_ip</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">tmp_ip</span>
+        <span class="k">return</span> <span class="n">ip</span> <span class="o">+</span> <span class="mi">1</span></div>
+    
+
+<div class="viewcode-block" id="Wireguard.get_qr"><a class="viewcode-back" href="../../wireguard.html#wireguard.wireguard.Wireguard.get_qr">[документация]</a>    <span class="k">def</span> <span class="nf">get_qr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peer_private_key</span><span class="p">,</span> <span class="n">peer_ip</span><span class="p">,</span> <span class="n">allowedIPs</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="n">config_peer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_client</span><span class="p">(</span><span class="n">peer_private_key</span><span class="p">,</span> <span class="n">peer_ip</span><span class="p">,</span> <span class="n">allowedIPs</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">qr</span> <span class="o">=</span> <span class="n">qrcode</span><span class="o">.</span><span class="n">QRCode</span><span class="p">()</span>
+        <span class="n">qr</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">config_peer</span><span class="p">)</span>
+        <span class="n">qr</span><span class="o">.</span><span class="n">make</span><span class="p">()</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">qr</span><span class="o">.</span><span class="n">make_image</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span></div></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Viktor Gorinskiy.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

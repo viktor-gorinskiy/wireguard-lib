@@ -1,0 +1,9 @@
+README.md
+setup.py
+wireguard/__init__.py
+wireguard/wireguard.py
+wireguard_lib.egg-info/PKG-INFO
+wireguard_lib.egg-info/SOURCES.txt
+wireguard_lib.egg-info/dependency_links.txt
+wireguard_lib.egg-info/requires.txt
+wireguard_lib.egg-info/top_level.txt
