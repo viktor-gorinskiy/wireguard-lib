@@ -118,7 +118,7 @@ class Wireguard():
         print('result_wg_info', result_wg_info)
         for l in result_wg_info:
             if l:
-                ip_addresses.append(l.split('\t')[1].split(str(self.peer_ip_mask))[0])
+                ip_addresses.append(l.split('\t')[1].split(f'/{str(self.peer_ip_mask)}')[0])
                 peers.append(l.split('\t')[0])
         if who == 'ip_addresses':
             return ip_addresses
