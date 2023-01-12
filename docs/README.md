@@ -13,12 +13,14 @@
 Воспользуемся консолью Python для получения приватного ключа:  
 
 ```
->>> from wireguard.wireguard import Wireguard
+>>> from wireguard import Wireguard
 >>> Wireguard().get_private_key
 'sBd8jkAY9Ht7wn+q5iGbW4MfShgjdxB1s3oTJsttaHc='
 ```
 Используя полученый ключ сгенерируем конфиг сервера:
 ```
+from wireguard import Wireguard
+
 wg = Wireguard(
     server_private_key = 'sBd8jkAY9Ht7wn+q5iGbW4MfShgjdxB1s3oTJsttaHc=',
     server_addres='wireguard.example.org',
@@ -36,4 +38,3 @@ PrivateKey = sBd8jkAY9Ht7wn+q5iGbW4MfShgjdxB1s3oTJsttaHc=
 Address = 10.10.10.1
 ListenPort = 51821
 ```
-

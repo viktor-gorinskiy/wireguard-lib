@@ -9,7 +9,7 @@
 project = 'wireguard-lib'
 copyright = '2023, Viktor Gorinskiy'
 author = 'Viktor Gorinskiy'
-release = '0.1.1'
+release = '0.1.5'
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
