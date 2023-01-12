@@ -3,28 +3,50 @@ import ipaddress
 import qrcode 
 
 
+
 class Wireguard():
- 
+    """Данный клас позволяет взаимодействовать с Wireguard через `subprocess` посылая команды в консоль.
+
+    Класс умеет:
+        * получать информацию о пирах и серверах
+        * добавлять и удалять пиры
+        * генерировать конфиги сервера и клиентов
+        * получать новый ip адрес из доступных, в том числе из уже освободившихся адресов
+        * генерировать QR код для пира
+    
+    Параметры инициализации класса:
+        :server_name: Имя сервера(сервиса systemctl), defaults to 'wg0'
+        :server_addres: URL или IP по которому клиенты будут подключаться к Wireguard, defaults to 'wireguard.example.org'
+        :server_port: Думаю понятно, defaults to 51820
+        :server_ip: IP адрес самого сервера, он же gateway, defaults to '10.10.10.1'
+        :peer_ip_mask: Маска IP адреса, которая будет добавляться пирам, defaults to 32
+        :peer_allowedIPs: Разрешенный маршруты для пиров, defaults to '0.0.0.0/0' весь трафик в Wireguard
+        :dns: Передать клиентам DNS
+
+            Это актуально, если например передаются маршруты во внутреннюю сеть за VPN. Но Ваш DNS сервер должен уметь резолвить так же и внешние адреса.
+        :server_private_key: Приватный ключ сервера из него будет генерироваться публичныйключ, который будет добавляться в конфиги пиров, defaults to ''
+    """
     def __init__(
         self, 
         server_name = 'wg0', 
-        server_addres = 'wireguard.example.org', 
-        server_ip = '10.10.10.1',
-        server_private_key = '',
+        server_addres = 'wireguard.example.org',
         server_port = 51820, 
+        server_ip = '10.10.10.1',
         peer_ip_mask = 32, 
         peer_allowedIPs = '0.0.0.0/0', 
-        dns = ''
+        dns = '',
+        server_private_key = ''
         ):
+
 
         self.server_name = server_name
         self.server_addres = server_addres
-        self.server_private_key = server_private_key
-        self.server_ip = server_ip
         self.server_port = server_port
+        self.server_ip = server_ip
         self.peer_ip_mask = peer_ip_mask
         self.peer_allowedIPs = peer_allowedIPs
         self.dns = dns
+        self.server_private_key = server_private_key
         
 
     @property
@@ -61,6 +83,7 @@ class Wireguard():
 
     def add(self, public_key='', ip=''):
         """Добавить пир(клиента)
+
         :param public_key: Публичный ключ пира(клиента)
         """
         ip = str(ip) + '/' + str(self.peer_ip_mask)
@@ -69,7 +92,7 @@ class Wireguard():
         return True
     
     def delete(self, public_key=""):
-        """Удаляет пир(слиента) используя его публичный ключ.
+        """Удаляет пир(клиента) используя его публичный ключ.
 
         :param public_key: Публичный ключ клиента, defaults to ""
         :type public_key: str, optional

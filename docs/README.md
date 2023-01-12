@@ -1,4 +1,4 @@
-# Wireguard
+# Описание
 
 Библиотека для работы с wireguard
 
@@ -8,15 +8,16 @@
 
 ## Пример использования:
 
-Сгенерируем конфиг сервера.
-Для генерации нужен приватный ключ сервера. Для этого воспользуемся консолью Python:  
+Сгенерируем конфиг сервера.  
+Для этого нужен приватный ключ.  
+Воспользуемся консолью Python для получения приватного ключа:  
 
 ```
 >>> from wireguard.wireguard import Wireguard
 >>> Wireguard().get_private_key
 'sBd8jkAY9Ht7wn+q5iGbW4MfShgjdxB1s3oTJsttaHc='
 ```
-Сгенерируем конфиг сервера использую полученый ранее ключ
+Используя полученый ключ сгенерируем конфиг сервера:
 ```
 wg = Wireguard(
     server_private_key = 'sBd8jkAY9Ht7wn+q5iGbW4MfShgjdxB1s3oTJsttaHc=',
