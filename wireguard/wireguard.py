@@ -115,7 +115,6 @@ class Wireguard():
         peers = []
         cmd = f"wg show '{self.server_name}' allowed-ips"
         result_wg_info = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode('utf-8').split('\n')
-        print('result_wg_info', result_wg_info)
         for l in result_wg_info:
             if l:
                 ip_addresses.append(l.split('\t')[1].split(f'/{str(self.peer_ip_mask)}')[0])

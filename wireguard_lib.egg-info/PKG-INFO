@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: wireguard-lib
-Version: 0.1.9
+Version: 0.1.10
 Summary: Библиотека для работы с wireguard
 Home-page: https://github.com/viktor-gorinskiy/wireguard-lib
 Author: Viktor Gorinskiy
