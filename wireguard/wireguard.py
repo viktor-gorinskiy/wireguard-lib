@@ -29,7 +29,7 @@ class Wireguard():
     def __init__(
         self, 
         server_name = 'wg0', 
-        server_addres = 'wireguard.example.org',
+        server_address = 'wireguard.example.org',
         server_port = 51820, 
         server_ip = '10.10.10.1',
         peer_ip_mask = 32, 
